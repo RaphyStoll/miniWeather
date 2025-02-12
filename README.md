@@ -1,5 +1,5 @@
 # DSQ #1 - Mini Weather Dashboard
-
+![Status](img/Badge%20de%20statut%20iPhone%20Vlog.svg)
 ## 🎮 Dev Side Quests ?
 Ce projet fait partie des [Dev Side Quests](https://github.com/RaphyStoll/Dev-Side-Quests-DSQ), une série de défis personnels de développement en temps limité. Chaque quête est une opportunité d'explorer de nouvelles technologies et de s'améliorer en gestion de projet.
 

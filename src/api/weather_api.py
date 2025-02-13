@@ -1,33 +1,69 @@
-from dotenv import load_dotenv
 import os
 import requests
+import time
+from dotenv import load_dotenv
+from datetime import datetime
 
 
-def get_meteo(ville, apikey):
+def get_current_weather(city, apikey):
     # url de l'api
-    url_base = "http://api.openweathermap.org/data/2.5/weather"
+    base_url = "http://api.openweathermap.org/data/2.5/weather"
 
     # parametres de la requete
-    parametres = {"q": ville, "appid": apikey, "units": "metric"}
+    params = {"q": city, "appid": apikey, "units": "metric"}
     # requete a l'api
-    reponse = requests.get(url_base, params=parametres)
+    response = requests.get(base_url, params=params)
 
     # verifier si la requete a reussi
-    if reponse.status_code == 200:
+    if response.status_code == 200:
         # analyser la reponse json
-        donnees = reponse.json()
+        data = response.json()
         # extraire les donner dans les bonnes variables
-        temperature = donnees["main"]["temp"]
-        humidite = donnees["main"]["humidity"]
-        description = donnees["weather"][0]["description"]
+        temperature = data["main"]["temp"]
+        humidity = data["main"]["humidity"]
+        description = data["weather"][0]["description"]
         return {
             "temperature": temperature,
-            "humidite": humidite,
+            "humidity": humidity,
             "description": description,
         }
-    elif reponse.status_code == 429:
-        print("Vous avez dépassé la limite de requêtes autorisée")
+    elif response.status_code == 429:
+        print("API key limit exceeded")
         return None
     else:
-        print("Erreur lors de la récupération des données météo")
+        print("Error retrieving weather data")
+        return None
+
+
+def get_forecast(city, api_key):
+    # URL de l'API
+    base_url = "http://api.openweathermap.org/data/2.5/forecast"
+    # Paramètres de la requête
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric",
+        "cnt": 120,
+    }  # nbr d'heures de prévisions
+
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        forecasts = []
+
+        # Extraire les données de la réponse
+        for forecast_item in data["list"]:
+            date = datetime.fromtimestamp(forecast_item["dt"])
+            temperature = forecast_item["main"]["temp"]
+            description = forecast_item["weather"][0]["description"]
+            forecasts.append(
+                {"date": date, "temperature": temperature, "description": description}
+            )
+        return forecasts
+    elif response.status_code == 429:
+        print("API key limit exceeded")
+        return None
+    else:
+        print(f"Error {response.status_code} occurred while fetching weather data")
         return None

@@ -1,0 +1,23 @@
+[project]
+name = "miniweather"
+version = "0.1.0"
+description = "Une appli de bureau qui permet de connaître la météo"
+authors = [
+    { name = "RaphyStoll", email = "raphael.ferreira@ik.me" }
+]
+license = { text = "GNU GENERAL PUBLIC LICENSE" }
+readme = "README.md"
+requires-python = ">=3.13"
+
+dependencies = [
+    "python-dotenv>=1.0.1,<2.0.0",
+    "requests>=2.32.3,<3.0.0",
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+black = "^25.1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

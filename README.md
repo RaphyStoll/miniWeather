@@ -8,7 +8,7 @@ Ce projet fait partie des [Dev Side Quests](https://github.com/RaphyStoll/Dev-Si
 - **Temps Max**: 3 jours (sessions de 8h)
 - **Classes Suggérées**: Python, JavaScript, Java
 - **Type**: Application de bureau
-
+- [📔 DevLog](https://github.com/RaphyStoll/miniWeather/DEVLOG.md)
 ## 🎯 Objectifs
 Créer une application de bureau qui permet aux utilisateurs de :
 - Rechercher la météo d'une ville

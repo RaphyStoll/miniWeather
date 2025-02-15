@@ -36,7 +36,7 @@ def format_forecast_info(forecast_info):
     return formatted_forecast
 
 
-def fetch_weather():
+def fetch_weather(event=None):
     city = entry_city.get()
     api_key = os.getenv("API_KEY")
 
@@ -110,6 +110,10 @@ def update_forecast_display(forecast_info):
         col += 3  # Passer à la colonne suivante pour le prochain jour
 
 
+def on_escape(event):
+    root.quit()
+
+
 # Initialisation de l'interface Tkinter avec style
 root = tk.Tk()
 root.title("Weather App")
@@ -133,6 +137,9 @@ style.configure("WeatherBox.TFrame", borderwidth=2, relief="groove")
 ttk.Label(root, text="Entrez le nom de la ville:", style="TLabel").pack(pady=10)
 entry_city = ttk.Entry(root, font=("Helvetica", 12))
 entry_city.pack(pady=10)
+entry_city.bind(
+    "<Return>", fetch_weather
+)  # Lier la touche Enter pour valider la recherche
 
 button_fetch = ttk.Button(
     root, text="Obtenir la météo", command=fetch_weather, style="TButton"
@@ -149,5 +156,8 @@ label_weather.pack(pady=10)
 # Frame pour afficher les prévisions
 forecast_frame = ttk.Frame(root)
 forecast_frame.pack(pady=10)
+
+# Lier la touche Esc pour quitter l'application
+root.bind("<Escape>", on_escape)
 
 root.mainloop()

@@ -11,6 +11,35 @@ load_dotenv()
 # Initialiser le gestionnaire de cache
 cache_manager = CacheManager(expiration_time=900)  # 15 minutes
 
+# Charger les favoris depuis un fichier
+favorites_file = "../data/favorites.json"
+if os.path.exists(favorites_file):
+    with open(favorites_file, "r") as file:
+        favorites = json.load(file)
+else:
+    favorites = []
+
+# Limite de favoris
+FAVORITE_LIMIT = 10
+
+# Charger les villes rapides depuis un fichier
+quick_cities_file = "quick_cities.json"
+if os.path.exists(quick_cities_file):
+    with open(quick_cities_file, "r") as file:
+        quick_cities = json.load(file)
+else:
+    quick_cities = []
+
+
+def save_favorites():
+    with open(favorites_file, "w") as file:
+        json.dump(favorites, file)
+
+
+def save_quick_cities():
+    with open(quick_cities_file, "w") as file:
+        json.dump(quick_cities, file)
+
 
 def format_weather_info(weather_info):
     return (
@@ -110,6 +139,137 @@ def update_forecast_display(forecast_info):
         col += 3  # Passer à la colonne suivante pour le prochain jour
 
 
+def add_favorite():
+    city = entry_city.get()
+    if city not in favorites:
+        if FAVORITE_LIMIT != -1 and len(favorites) >= FAVORITE_LIMIT:
+            messagebox.showinfo("Info", "Limite de favoris atteinte.")
+            return
+        favorites.append(city)
+        save_favorites()
+        update_favorites_display()
+    else:
+        messagebox.showinfo("Info", "Cette ville est déjà dans vos favoris.")
+
+
+def remove_favorite(city):
+    if city in favorites:
+        favorites.remove(city)
+        save_favorites()
+        update_favorites_display()
+
+
+def update_favorites_display():
+    # Effacer les widgets existants dans la zone des favoris
+    for widget in favorites_frame.winfo_children():
+        widget.destroy()
+
+    # Créer des boutons pour chaque ville favorite
+    for city in favorites:
+        btn = ttk.Button(
+            favorites_frame,
+            text=city,
+            command=lambda c=city: fetch_weather_for_favorite(c),
+        )
+        btn.pack(side="left", padx=5, pady=5)
+        btn_remove = ttk.Button(
+            favorites_frame, text="✖", command=lambda c=city: remove_favorite(c)
+        )
+        btn_remove.pack(side="left", padx=2, pady=5)
+
+
+def fetch_weather_for_favorite(city):
+    entry_city.delete(0, tk.END)
+    entry_city.insert(0, city)
+    fetch_weather()
+
+
+def show_favorites():
+    # Afficher la liste des favoris
+    favorites_window = tk.Toplevel(root)
+    favorites_window.title("Villes Favorites")
+
+    favorites_list_frame = ttk.Frame(favorites_window)
+    favorites_list_frame.pack(pady=10)
+
+    for city in favorites:
+        btn = ttk.Button(
+            favorites_list_frame,
+            text=city,
+            command=lambda c=city: fetch_weather_for_favorite(c),
+        )
+        btn.pack(side="left", padx=5, pady=5)
+        btn_remove = ttk.Button(
+            favorites_list_frame, text="✖", command=lambda c=city: remove_favorite(c)
+        )
+        btn_remove.pack(side="left", padx=2, pady=5)
+
+
+def add_quick_city():
+    city = entry_city.get()
+    if city not in quick_cities:
+        quick_cities.append(city)
+        save_quick_cities()
+        update_quick_cities_display()
+    else:
+        messagebox.showinfo("Info", "Cette ville est déjà dans vos villes rapides.")
+
+
+def remove_quick_city(city):
+    if city in quick_cities:
+        quick_cities.remove(city)
+        save_quick_cities()
+        update_quick_cities_display()
+
+
+def update_quick_cities_display():
+    # Effacer les widgets existants dans la zone des villes rapides
+    for widget in quick_cities_frame.winfo_children():
+        widget.destroy()
+
+    # Créer des boutons pour chaque ville rapide
+    for city in quick_cities:
+        btn = ttk.Button(
+            quick_cities_frame,
+            text=city,
+            command=lambda c=city: fetch_weather_for_quick_city(c),
+        )
+        btn.pack(side="left", padx=5, pady=5)
+        btn_remove = ttk.Button(
+            quick_cities_frame, text="✖", command=lambda c=city: remove_quick_city(c)
+        )
+        btn_remove.pack(side="left", padx=2, pady=5)
+
+
+def fetch_weather_for_quick_city(city):
+    entry_city.delete(0, tk.END)
+    entry_city.insert(0, city)
+    fetch_weather()
+
+
+def show_quick_cities():
+    # Afficher la liste des villes rapides
+    quick_cities_window = tk.Toplevel(root)
+    quick_cities_window.title("Villes Rapides")
+
+    quick_cities_list_frame = ttk.Frame(quick_cities_window)
+    quick_cities_list_frame.pack(pady=10)
+
+    for city in quick_cities:
+        btn = ttk.Button(
+            quick_cities_list_frame,
+            text=city,
+            command=lambda c=city: fetch_weather_for_quick_city(c),
+        )
+        btn.pack(side="left", padx=5, pady=5)
+        btn_remove = ttk.Button(
+            quick_cities_list_frame,
+            text="✖",
+            command=lambda c=city: remove_quick_city(c),
+        )
+        btn_remove.pack(side="left", padx=2, pady=5)
+
+
 def on_escape(event):
     root.quit()
 
@@ -146,6 +306,28 @@ button_fetch = ttk.Button(
 )
 button_fetch.pack(pady=20)
 
+# Bouton étoile pour ajouter aux favoris
+star_button = ttk.Button(root, text="⭐", command=add_favorite, style="TButton")
+star_button.pack(side="left", padx=5, pady=10)
+
+# Bouton pour accéder à la liste des favoris
+favorites_button = ttk.Button(
+    root, text="Favoris", command=show_favorites, style="TButton"
+)
+favorites_button.pack(side="left", padx=5, pady=10)
+
+# Bouton pour ajouter une ville rapide
+quick_city_button = ttk.Button(
+    root, text="➕ Ville Rapide", command=add_quick_city, style="TButton"
+)
+quick_city_button.pack(side="left", padx=5, pady=10)
+
+# Bouton pour accéder à la liste des villes rapides
+quick_cities_button = ttk.Button(
+    root, text="Villes Rapides", command=show_quick_cities, style="TButton"
+)
+quick_cities_button.pack(side="left", padx=5, pady=10)
+
 # Frame pour encadrer les informations météorologiques actuelles
 weather_box = ttk.Frame(root, style="WeatherBox.TFrame")
 weather_box.pack(pady=10, padx=10, fill="none", expand=False)
@@ -156,6 +338,20 @@ label_weather.pack(pady=10)
 # Frame pour afficher les prévisions
 forecast_frame = ttk.Frame(root)
 forecast_frame.pack(pady=10)
+
+# Frame pour afficher les favoris
+favorites_frame = ttk.Frame(root)
+favorites_frame.pack(pady=10)
+
+# Frame pour afficher les villes rapides
+quick_cities_frame = ttk.Frame(root)
+quick_cities_frame.pack(pady=10)
+
+# Mettre à jour l'affichage des favoris
+update_favorites_display()
+
+# Mettre à jour l'affichage des villes rapides
+update_quick_cities_display()
 
 # Lier la touche Esc pour quitter l'application
 root.bind("<Escape>", on_escape)

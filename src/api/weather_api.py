@@ -43,7 +43,7 @@ def get_forecast(city, api_key):
         "q": city,
         "appid": api_key,
         "units": "metric",
-        "cnt": 120,
+        "cnt": 72,
     }  # nbr d'heures de prévisions
 
     response = requests.get(base_url, params=params)

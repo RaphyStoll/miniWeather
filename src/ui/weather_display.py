@@ -226,6 +226,9 @@ entry_city = ttk.Entry(root, font=("Helvetica", 12))
 entry_city.grid(row=1, column=0, columnspan=3, pady=10)
 entry_city.bind("<Return>", fetch_weather)
 
+# defini le focus sur l'entry
+entry_city.focus()
+entry_city.icursor(tk.END)
 # Créer un Frame pour contenir les boutons
 button_frame = ttk.Frame(root)
 button_frame.grid(row=2, column=0, columnspan=3, pady=10)

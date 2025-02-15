@@ -1,6 +1,6 @@
 # DSQ #1 - Mini Weather Dashboard
 
-![Status](img/Badge%20de%20statut%20iPhone%20Vlog.svg)
+![Status](img/Badge%20de%20statut%20complet.svg)
 
 ## 🎮 Dev Side Quests ?
 

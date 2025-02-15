@@ -4,6 +4,7 @@ from src.api.weather_api import get_current_weather, get_forecast
 from src.cache.cache_manager import CacheManager
 from dotenv import load_dotenv
 import os
+import json
 
 # Charger les variables d'environnement à partir du fichier .env
 load_dotenv()
@@ -13,32 +14,15 @@ cache_manager = CacheManager(expiration_time=900)  # 15 minutes
 
 # Charger les favoris depuis un fichier
 favorites_file = "../data/favorites.json"
-if os.path.exists(favorites_file):
-    with open(favorites_file, "r") as file:
-        favorites = json.load(file)
-else:
-    favorites = []
-
-# Limite de favoris
-FAVORITE_LIMIT = 10
-
-# Charger les villes rapides depuis un fichier
-quick_cities_file = "quick_cities.json"
-if os.path.exists(quick_cities_file):
-    with open(quick_cities_file, "r") as file:
-        quick_cities = json.load(file)
-else:
-    quick_cities = []
-
-
-def save_favorites():
+FAVORITE_LIMIT = 5
+if not os.path.exists(favorites_file):
+    os.makedirs(os.path.dirname(favorites_file), exist_ok=True)
     with open(favorites_file, "w") as file:
-        json.dump(favorites, file)
+        json.dump([], file)
 
-
-def save_quick_cities():
-    with open(quick_cities_file, "w") as file:
-        json.dump(quick_cities, file)
+# Charger les favoris depuis le fichier
+with open(favorites_file, "r") as file:
+    favorites = json.load(file)
 
 
 def format_weather_info(weather_info):
@@ -80,7 +64,7 @@ def fetch_weather(event=None):
 
         # Mettre à jour le label avec les informations météorologiques actuelles
         label_weather.config(
-            text=f"Météo actuelle:\n{format_weather_info(weather_info)}"
+            text=f"Météo actuelle: {city}\n{format_weather_info(weather_info) }"
         )
 
         # Mettre à jour les prévisions
@@ -139,6 +123,11 @@ def update_forecast_display(forecast_info):
         col += 3  # Passer à la colonne suivante pour le prochain jour
 
 
+def save_favorites():
+    with open(favorites_file, "w") as file:
+        json.dump(favorites, file)
+
+
 def add_favorite():
     city = entry_city.get()
     if city not in favorites:
@@ -189,6 +178,7 @@ def show_favorites():
     favorites_window = tk.Toplevel(root)
     favorites_window.title("Villes Favorites")
 
+    favorites_window.minsize(width=400, height=300)
     favorites_list_frame = ttk.Frame(favorites_window)
     favorites_list_frame.pack(pady=10)
 
@@ -201,71 +191,6 @@ def show_favorites():
         btn.pack(side="left", padx=5, pady=5)
         btn_remove = ttk.Button(
             favorites_list_frame, text="✖", command=lambda c=city: remove_favorite(c)
-        )
-        btn_remove.pack(side="left", padx=2, pady=5)
-
-
-def add_quick_city():
-    city = entry_city.get()
-    if city not in quick_cities:
-        quick_cities.append(city)
-        save_quick_cities()
-        update_quick_cities_display()
-    else:
-        messagebox.showinfo("Info", "Cette ville est déjà dans vos villes rapides.")
-
-
-def remove_quick_city(city):
-    if city in quick_cities:
-        quick_cities.remove(city)
-        save_quick_cities()
-        update_quick_cities_display()
-
-
-def update_quick_cities_display():
-    # Effacer les widgets existants dans la zone des villes rapides
-    for widget in quick_cities_frame.winfo_children():
-        widget.destroy()
-
-    # Créer des boutons pour chaque ville rapide
-    for city in quick_cities:
-        btn = ttk.Button(
-            quick_cities_frame,
-            text=city,
-            command=lambda c=city: fetch_weather_for_quick_city(c),
-        )
-        btn.pack(side="left", padx=5, pady=5)
-        btn_remove = ttk.Button(
-            quick_cities_frame, text="✖", command=lambda c=city: remove_quick_city(c)
-        )
-        btn_remove.pack(side="left", padx=2, pady=5)
-
-
-def fetch_weather_for_quick_city(city):
-    entry_city.delete(0, tk.END)
-    entry_city.insert(0, city)
-    fetch_weather()
-
-
-def show_quick_cities():
-    # Afficher la liste des villes rapides
-    quick_cities_window = tk.Toplevel(root)
-    quick_cities_window.title("Villes Rapides")
-
-    quick_cities_list_frame = ttk.Frame(quick_cities_window)
-    quick_cities_list_frame.pack(pady=10)
-
-    for city in quick_cities:
-        btn = ttk.Button(
-            quick_cities_list_frame,
-            text=city,
-            command=lambda c=city: fetch_weather_for_quick_city(c),
-        )
-        btn.pack(side="left", padx=5, pady=5)
-        btn_remove = ttk.Button(
-            quick_cities_list_frame,
-            text="✖",
-            command=lambda c=city: remove_quick_city(c),
         )
         btn_remove.pack(side="left", padx=2, pady=5)
 
@@ -293,65 +218,56 @@ style.configure("Heading.TLabel", font=("Helvetica", 12, "bold"), padding=5)
 style.configure("Subheading.TLabel", font=("Helvetica", 12, "italic"), padding=5)
 style.configure("WeatherBox.TFrame", borderwidth=2, relief="groove")
 
-# Créer les widgets avec style
-ttk.Label(root, text="Entrez le nom de la ville:", style="TLabel").pack(pady=10)
-entry_city = ttk.Entry(root, font=("Helvetica", 12))
-entry_city.pack(pady=10)
-entry_city.bind(
-    "<Return>", fetch_weather
-)  # Lier la touche Enter pour valider la recherche
-
-button_fetch = ttk.Button(
-    root, text="Obtenir la météo", command=fetch_weather, style="TButton"
+# Créer les widgets avec style (grid pour possitionner les widgets)
+ttk.Label(root, text="Entrez le nom de la ville:", style="TLabel").grid(
+    row=0, column=0, columnspan=3, pady=10
 )
-button_fetch.pack(pady=20)
+entry_city = ttk.Entry(root, font=("Helvetica", 12))
+entry_city.grid(row=1, column=0, columnspan=3, pady=10)
+entry_city.bind("<Return>", fetch_weather)
+
+# Créer un Frame pour contenir les boutons
+button_frame = ttk.Frame(root)
+button_frame.grid(row=2, column=0, columnspan=3, pady=10)
 
 # Bouton étoile pour ajouter aux favoris
-star_button = ttk.Button(root, text="⭐", command=add_favorite, style="TButton")
-star_button.pack(side="left", padx=5, pady=10)
+star_button = ttk.Button(
+    button_frame, text="+⭐", command=add_favorite, style="TButton"
+)
+star_button.pack(side="left", padx=5)
+
+# Bouton pour obtenir la météo
+button_fetch = ttk.Button(
+    button_frame, text="Obtenir la météo", command=fetch_weather, style="TButton"
+)
+button_fetch.pack(side="left", padx=5)
 
 # Bouton pour accéder à la liste des favoris
 favorites_button = ttk.Button(
-    root, text="Favoris", command=show_favorites, style="TButton"
+    button_frame, text="⭐", command=show_favorites, style="TButton"
 )
-favorites_button.pack(side="left", padx=5, pady=10)
+favorites_button.pack(side="left", padx=5)
 
-# Bouton pour ajouter une ville rapide
-quick_city_button = ttk.Button(
-    root, text="➕ Ville Rapide", command=add_quick_city, style="TButton"
-)
-quick_city_button.pack(side="left", padx=5, pady=10)
-
-# Bouton pour accéder à la liste des villes rapides
-quick_cities_button = ttk.Button(
-    root, text="Villes Rapides", command=show_quick_cities, style="TButton"
-)
-quick_cities_button.pack(side="left", padx=5, pady=10)
 
 # Frame pour encadrer les informations météorologiques actuelles
 weather_box = ttk.Frame(root, style="WeatherBox.TFrame")
-weather_box.pack(pady=10, padx=10, fill="none", expand=False)
+weather_box.grid(row=3, column=0, columnspan=3, pady=10, padx=10, sticky="ew")
+
 
 label_weather = ttk.Label(weather_box, text="Météo actuelle: None", style="TLabel")
-label_weather.pack(pady=10)
+label_weather.grid(row=0, column=0, pady=10)
 
 # Frame pour afficher les prévisions
 forecast_frame = ttk.Frame(root)
-forecast_frame.pack(pady=10)
+forecast_frame.grid(row=4, column=0, columnspan=3, pady=10)
 
 # Frame pour afficher les favoris
 favorites_frame = ttk.Frame(root)
-favorites_frame.pack(pady=10)
-
-# Frame pour afficher les villes rapides
-quick_cities_frame = ttk.Frame(root)
-quick_cities_frame.pack(pady=10)
+favorites_frame.grid(row=5, column=0, columnspan=3, pady=10)
 
 # Mettre à jour l'affichage des favoris
 update_favorites_display()
 
-# Mettre à jour l'affichage des villes rapides
-update_quick_cities_display()
 
 # Lier la touche Esc pour quitter l'application
 root.bind("<Escape>", on_escape)

@@ -1,7 +1,9 @@
 # api/weather_api.py
-from src.test.test_weather_api import test_get
 from dotenv import load_dotenv
+from src.ui.weather_display import fetch_weather
 import os
+
+# from src.test.test_weather_api import test_get
 
 
 def main():
@@ -9,7 +11,9 @@ def main():
     if not api_key:
         print("API_KEY not found in .env file")
         return
-    test_get(api_key)
+
+
+# test_get(api_key)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ load_dotenv()
 cache_manager = CacheManager(expiration_time=900)  # 15 minutes
 
 # Charger les favoris depuis un fichier
-favorites_file = "../data/favorites.json"
+favorites_file = "./favorites.json"
 FAVORITE_LIMIT = 5
 if not os.path.exists(favorites_file):
     os.makedirs(os.path.dirname(favorites_file), exist_ok=True)

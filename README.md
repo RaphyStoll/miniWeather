@@ -4,9 +4,9 @@
 
 ## 🎮 Dev Side Quests ?
 
-Ce projet fait partie des [Dev Side Quests](https://github.com/RaphyStoll/Dev-Side-Quests-DSQ), une
-série de défis personnels de développement en temps limité. Chaque quête est une opportunité
-d'explorer de nouvelles technologies et de s'améliorer en gestion de projet.
+Ce projet fait partie des [Dev Side Quests](https://github.com/RaphyStoll/devSideQuests), une série
+de défis personnels de développement en temps limité. Chaque quête est une opportunité d'explorer de
+nouvelles technologies et de s'améliorer en gestion de projet.
 
 ## 📋 Info Quest
 
@@ -14,7 +14,7 @@ d'explorer de nouvelles technologies et de s'améliorer en gestion de projet.
 - **Temps Max**: 3 jours
 - **Classes Suggérées**: Python, JavaScript, Java
 - **Type**: Application de bureau
-- [📔 DevLog](https://github.com/RaphyStoll/miniWeather/DEVLOG.md)
+- [📔 DevLog](https://github.com/RaphyStoll/miniWeather/blob/main/DEVLOG.md)
 
 ## 🎯 Objectifs
 
@@ -30,7 +30,8 @@ Créer une application de bureau qui permet aux utilisateurs de :
 ### Devlog
 
 Pour plus de détails sur le processus de développement, les décisions prises et les défis
-rencontrés, je vous invite à lire les [devlog](https://github.com/RaphyStoll/miniWeather/DEVLOG.md)
+rencontrés, je vous invite à lire les
+[devlog](https://github.com/RaphyStoll/miniWeather/blob/main/DEVLOG.md)
 
 ### Prérequis
 
@@ -42,7 +43,7 @@ rencontrés, je vous invite à lire les [devlog](https://github.com/RaphyStoll/m
 1. Clonez le repository :
 
 ```bash
-git clone https://github.com/RaphyStoll/miniWather.git
+git clone https://github.com/RaphyStoll/miniWeather.git
 cd miniWather
 ```
 

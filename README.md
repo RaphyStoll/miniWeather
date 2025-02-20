@@ -44,7 +44,7 @@ rencontrés, je vous invite à lire les
 
 ```bash
 git clone https://github.com/RaphyStoll/miniWeather.git
-cd miniWather
+cd miniWeather
 ```
 
 2. Installez les dépendances avec Poetry :
@@ -75,7 +75,7 @@ poetry run python3 main.py
 ### Structure des Fichiers
 
 ```
-miniWather/
+miniWeather/
 ├── img/
 │   ├── Badge de statut complet.svg
 │   └── Badge de statut en cours.svg
@@ -91,7 +91,7 @@ miniWather/
 │       ├── search_bar.py
 │       └── weather_display.py
 ├── .gitignore
-├── DEVLOG.MD
+├── DEVLOG.md
 ├── LICENSE
 ├── pyproject.toml
 ├── poetry.lock
@@ -104,9 +104,9 @@ miniWather/
 - 🔍 Recherche de ville
 - 🌡️ Affichage de la température actuelle
 - 💧 Indication du taux d'humidité
-- 🌤️ description
+- 🌤️ Description
 - 📅 Prévisions sur 3 jours
-- ⭐ Sauvegarde de cinq ville favorite
+- ⭐ Sauvegarde de cinq villes favorites
 
 ### Captures d'écran
 
